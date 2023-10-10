@@ -1,0 +1,11 @@
+2023-10-10 15:26:31: Ejecutando la linea 5
+2023-10-10 15:26:31: Error en la linea 6
+[INFO]:2023-10-10 15:26:31: Esto es un mensaje usando una funcion
+[INFO]:2023-10-10 15:26:31: Array
+(
+    [0] => Maria
+    [1] => Marcelo
+    [2] => Jouse
+)
+
+[INFO]:2023-10-10 15:26:31: Es mayor de edad
