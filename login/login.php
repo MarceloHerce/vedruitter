@@ -4,6 +4,7 @@
     #$ruta = dirname(__FILE__)."\\logs\\{$project_name}_{$fecha_actual}.log";
     $ruta ="..\\logs\\{$project_name}_{$fecha_actual}.log";
     $connect = connection();
+    session_start();
     
     if(isset($_POST)){
         $email = trim($_POST["mail"]);
@@ -16,6 +17,7 @@
     
             if (password_verify($pass, $usuario["password"])) {
                 $_SESSION["usuario"] = $usuario;
+                $_SESSION["userData"] = $usuario;
                 log_message("Login correcto","INFO",$ruta);
                 header("Location: ../index.php");
             } else {

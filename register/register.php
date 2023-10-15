@@ -1,9 +1,9 @@
 <?php 
+require_once("../connection/connection.php");
+require_once("..\logger\logger.php");
+session_start();
 
 if (isset($_POST["username"])) {
-    require_once("../connection/connection.php");
-    require_once("..\logger\logger.php");
-    session_start();
     $connect = connection();
     //Recoger los datos
     $username = isset($_POST["username"]) ? mysqli_real_escape_string($connect, $_POST["username"]) : false;
@@ -86,6 +86,7 @@ if (isset($_POST["username"])) {
             required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"/>
         </div>
         <input id="sendBttn" class="m-3 btn btn-primary" type="submit" value="Enviar" name="submit"/>
+        <a href="../index.php">Ya tienes una cuenta</a>
         </form>
     </div>
 </body>
