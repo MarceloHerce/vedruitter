@@ -99,12 +99,16 @@
         El nombre de cada usuario en el tweet debe ser un enlace que te lleve a la página perfil del usuario. 
         También debe aparecer un enlace para cerrar sesión. -->
         <?php
-        var_dump($_SESSION["userData"]);
+        #var_dump($_SESSION["userData"]);
+        #var_dump($_SESSION["userData"]["follows"]);
         ?>
 
         <div class="container mt-5">
             <!-- Datos usuario -->
-            <?= "Hola ".$_SESSION["userData"]["username"];?>
+            <!-- <h4> breadcrumbs();</h4> -->
+            <h2>Hola <a href="perfil/perfil.php?username=<?=$_SESSION["userData"]["username"];?>">
+                <?=$_SESSION["userData"]["username"];?></a>
+            </h2>
             <?= $_SESSION["userData"]["email"];?>
             <a href="login/logout.php" class="m-3 btn btn-primary">Logout</a>
             <!-- Datos usuario -->
@@ -117,9 +121,9 @@
                 </div>
                 <input id="sendBttn" class="m-3 btn btn-primary" type="submit" value="Vedrunear" name="Vedrunear"/>
             </form>
+            <!-- Escribir twit -->
             <?php
             if(isset($_POST["Vedrunear"])){
-                echo "post mandado";
                 $name = $_SESSION["userData"]["username"];
                 $sql = "SELECT id FROM users WHERE username = '$name'";
                 $res = mysqli_query($connect, $sql);
@@ -136,58 +140,58 @@
             ?>
             <!-- Escribir twit -->
             <!-- Mostrar tweet seguidos o todos -->
-            <div>
-                <button id="seguidosB" onclick="toggleContent('seguidos')" class="m-3 btn btn-primary">Seguidos</button>
-                <button id="todosB" onclick="toggleContent('todos')" class="m-3 btn btn-primary">Todos  </button>
-
-            </div>
-            <script>
-                function toggleContent( n ) {
-                    const divSeguidos = document.getElementById('seguidos');
-                    const divTodos = document.getElementById('todos');
-
-                    if (n === 'seguidos') {
-                        divSeguidos.style.display = 'block';
-                        divTodos.style.display = 'none';
-                    } else {
-                        divSeguidos.style.display = 'none';
-                        divTodos.style.display = 'block';
-                            }
-                }
-            </script>
-            <div id="seguidos" style="display: none;">
-                <?php
-                    // Contenido PHP que quieres mostrar u ocultar
-                    echo "¡Este es el contenido que se muestra seguidos!";
-                    $id = $_SESSION["userData"]["id"];
-                    $sql = "SELECT * FROM publications WHERE userId = (SELECT userToFollowId FROM follows WHERE users_id = $id)";
-                    $res = mysqli_query($connect, $sql);
-                ?>
-                <?php while ($row = mysqli_fetch_array($res)): ?>
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= $row['userId'] ?></h5>
-                        <p class="card-text"><?= $row['text'] ?></p>
-                    </div>
+            <div class="container mt-5 center">
+                <div>
+                    <button id="seguidosB" onclick="toggleContent('seguidos')" class="m-3 btn btn-primary">Seguidos</button>
+                    <button id="todosB" onclick="toggleContent('todos')" class="m-3 btn btn-primary">Todos  </button>
+    
                 </div>
-                <?php endwhile; ?>
-            </div>
-            <div id="todos" style="display: none;">
-                <?php
-                    // Contenido PHP que quieres mostrar u ocultar
-                    echo "¡Este es el contenido que se muestra todo!";
-                    $sql = "SELECT * FROM publications AS pu JOIN users AS us ON pu.userId = us.id";
-                    $res = mysqli_query($connect, $sql);
-                    #var_dump(mysqli_fetch_assoc($res));
-                ?>
-                <?php while ($row = mysqli_fetch_array($res)): ?>
+                <script>
+                    function toggleContent( n ) {
+                        const divSeguidos = document.getElementById('seguidos');
+                        const divTodos = document.getElementById('todos');
+    
+                        if (n === 'seguidos') {
+                            divSeguidos.style.display = 'block';
+                            divTodos.style.display = 'none';
+                        } else {
+                            divSeguidos.style.display = 'none';
+                            divTodos.style.display = 'block';
+                                }
+                    }
+                </script>
+                <div id="seguidos" style="display: none;">
+                    <?php
+                        $id = $_SESSION["userData"]["id"];
+                        $sql = "SELECT * FROM publications AS pu JOIN users AS us ON pu.userId = us.id WHERE userId IN (SELECT userToFollowId FROM follows WHERE users_id = $id) ORDER BY pu.createDate DESC";
+                        $res = mysqli_query($connect, $sql);
+                    ?>
+                    <?php while ($row = mysqli_fetch_array($res)): ?>
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
-                            <h5 class="card-title"><?= $row['userId'] ?><a href=""><?= $row['username'] ?></a></h5>
+                            <h5 class="card-title"><a href="perfil/perfil.php?username=<?= $row['username'] ?>"><?= $row['username'] ?></a></h5>
                             <p class="card-text"><?= $row['text'] ?></p>
+                            <p class="card-text"><?= $row['createDate'] ?></p>
                         </div>
                     </div>
-                <?php endwhile; ?>
+                    <?php endwhile; ?>
+                </div>
+                <div id="todos" style="display: none;">
+                    <?php
+                        $sql = "SELECT * FROM publications AS pu JOIN users AS us ON pu.userId = us.id ORDER BY pu.createDate DESC";
+                        $res = mysqli_query($connect, $sql);
+                        #var_dump(mysqli_fetch_assoc($res));
+                    ?>
+                    <?php while ($row = mysqli_fetch_array($res)): ?>
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="perfil/perfil.php?username=<?= $row['username'] ?>"><?= $row['username'] ?></a></h5>
+                                <p class="card-text"><?= $row['text'] ?></p>
+                                <p class="card-text"><?= $row['createDate'] ?></p>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
             </div>
             <?php
             // var_dump($_POST);

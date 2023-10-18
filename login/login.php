@@ -1,6 +1,6 @@
 <?php
-    require_once("..\connection\connection.php");
-    require_once("..\logger\logger.php");
+    require_once "..\connection\connection.php";
+    require_once "..\logger\logger.php";
     #$ruta = dirname(__FILE__)."\\logs\\{$project_name}_{$fecha_actual}.log";
     $ruta ="..\\logs\\{$project_name}_{$fecha_actual}.log";
     $connect = connection();
@@ -19,6 +19,16 @@
                 $_SESSION["usuario"] = $usuario;
                 $_SESSION["userData"] = $usuario;
                 log_message("Login correcto","INFO",$ruta);
+                //usuario seguidos
+                $id = $_SESSION["userData"]["id"];
+                $sql = "SELECT userToFollowId FROM follows WHERE users_id = $id";
+                $res = mysqli_query($connect, $sql);
+                $res =mysqli_fetch_assoc($res);
+                if($res!=null){
+                    $_SESSION["userData"]["follows"]= $res;
+                } else{
+                    $_SESSION["userData"]["follows"]=[];
+                }
                 header("Location: ../index.php");
             } else {
                 $_SESSION["error_login"] = "Login incorrecto";
